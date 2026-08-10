@@ -6,8 +6,47 @@
  * Version: 1.0
  * Author: David Snow
  * Author URI: https://davidsnow.net
- * Requires Plugins: WooCommerce
+ * Requires Plugins: woocommerce, woocommerce-subscriptions
  */
+
+/**
+ * Fail-safe: Check if WooCommerce is active.
+ */
+if (! class_exists('WooCommerce')) {
+  add_action('admin_notices', function () {
+    if (! current_user_can('activate_plugins')) {
+      return;
+    }
+?>
+    <div class="notice notice-error is-dismissible">
+      <p>
+        <strong>Remove Free Trial Text Snippet:</strong> Requires <strong>WooCommerce</strong> to be installed and active.
+      </p>
+    </div>
+  <?php
+  });
+
+  return; // Stop running the rest of this snippet
+}
+if (! class_exists('WC_Subscriptions')) {
+  add_action('admin_notices', function () {
+    if (! current_user_can('activate_plugins')) {
+      return;
+    }
+  ?>
+    <div class="notice notice-error is-dismissible">
+      <p>
+        <strong>Remove Free Trial Text Snippet:</strong> Requires <strong>WooCommerce Subscriptions</strong> to be installed
+        and active.
+      </p>
+    </div>
+<?php
+  });
+
+  return; // Stop running the rest of this snippet
+}
+
+// --- Snippet Code Below ---
 
 add_filter('woocommerce_subscription_price_string', 'dynamic_subscription_price_string', 10, 2);
 
