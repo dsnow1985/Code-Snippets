@@ -2,8 +2,8 @@
 
 /**
  * Plugin Name: DS Snippets
- * Description: Scans a target folder and includes PHP files that do not contain an underscore in their filename to run on a WordPress site.
- * Version: 1.0
+ * Description: Scans a target folder and includes PHP files based on settings toggles.
+ * Version: 2.0
  * Author: David Snow
  */
 
@@ -12,55 +12,138 @@ if (! defined('ABSPATH')) {
 }
 
 /**
- * WARNING: Automatically including and executing PHP files from a directory 
- * can pose significant security risks. Ensure the target directory is 
- * properly secured and only accessible by authorized administrators.
+ * Get valid snippet files from the snippets directory.
  */
-function scp_scan_and_run_directory()
+function ds_get_snippet_files()
 {
-  // Set the target directory path
-  $dir_path = WP_CONTENT_DIR . '/ds-snippets/snippets';
+  $dir_path = WP_CONTENT_DIR . '/plugins/ds-snippets/snippets/';
+  $snippet_files = array();
 
-  // Check if directory exists
   if (! is_dir($dir_path)) {
-    return;
+    return $snippet_files;
   }
 
-  // Open the directory
-  $handle = opendir($dir_path);
-  if (! $handle) {
-    return;
+  $files = scandir($dir_path);
+  if (empty($files)) {
+    return $snippet_files;
   }
 
-  // Read files in a loop
-  while (false !== ($file = readdir($handle))) {
-    // Skip system pointer files
+  foreach ($files as $file) {
     if ($file === '.' || $file === '..') {
       continue;
     }
 
-    // Check if it is a .php file
     $ext = pathinfo($file, PATHINFO_EXTENSION);
     if (strtolower($ext) !== 'php') {
       continue;
     }
 
-    // Skip the file if it has an underscore '_' in the filename
+    // Skip files containing an underscore
     if (strpos($file, '_') !== false) {
       continue;
     }
 
-    // Full path to the file
-    $file_full_path = $dir_path . $file;
-
-    // Include and run the file
-    if (file_exists($file_full_path)) {
-      include $file_full_path;
-    }
+    $snippet_files[] = $file;
   }
 
-  closedir($handle);
+  return $snippet_files;
 }
 
-// Hook the function into WordPress (runs on init)
-add_action('init', 'scp_scan_and_run_directory');
+/**
+ * Run enabled snippets.
+ */
+function ds_run_enabled_snippets()
+{
+  $dir_path = WP_CONTENT_DIR . '/plugins/ds-snippets/snippets/';
+  $enabled_snippets = get_option('ds_enabled_snippets', array());
+
+  if (! is_array($enabled_snippets) || empty($enabled_snippets)) {
+    return;
+  }
+
+  foreach ($enabled_snippets as $file => $is_enabled) {
+    if ($is_enabled && strpos($file, '_') === false && pathinfo($file, PATHINFO_EXTENSION) === 'php') {
+      $file_path = $dir_path . sanitize_file_name($file);
+      if (file_exists($file_path)) {
+        include_once $file_path;
+      }
+    }
+  }
+}
+add_action('plugins_loaded', 'ds_run_enabled_snippets');
+
+/**
+ * Register settings page.
+ */
+function ds_snippets_add_admin_menu()
+{
+  add_options_page(
+    'DS Snippets Settings',
+    'DS Snippets',
+    'manage_options',
+    'ds-snippets',
+    'ds_snippets_options_page'
+  );
+}
+add_action('admin_menu', 'ds_snippets_add_admin_menu');
+
+/**
+ * Register setting field.
+ */
+function ds_snippets_settings_init()
+{
+  register_setting('ds_snippets_group', 'ds_enabled_snippets');
+}
+add_action('admin_init', 'ds_snippets_settings_init');
+
+/**
+ * Render settings page.
+ */
+function ds_snippets_options_page()
+{
+  if (! current_user_can('manage_options')) {
+    return;
+  }
+
+  $available_files = ds_get_snippet_files();
+  $enabled_snippets = get_option('ds_enabled_snippets', array());
+  if (! is_array($enabled_snippets)) {
+    $enabled_snippets = array();
+  }
+?>
+  <div class="wrap">
+    <h1>DS Snippets Settings</h1>
+    <form action="options.php" method="post">
+      <?php
+      settings_fields('ds_snippets_group');
+      do_settings_sections('ds_snippets_group');
+      ?>
+
+      <?php if (empty($available_files)) : ?>
+        <p>No valid snippet files found in <code>/wp-content/plugins/ds-snippets/snippets/</code>.</p>
+      <?php else : ?>
+        <table class="form-table" role="presentation">
+          <tbody>
+            <?php foreach ($available_files as $file) :
+              $is_checked = ! empty($enabled_snippets[$file]);
+            ?>
+              <tr>
+                <th scope="row"><?php echo esc_html($file); ?></th>
+                <td>
+                  <label for="snippet_<?php echo esc_attr(sanitize_key($file)); ?>">
+                    <input type="checkbox" id="snippet_<?php echo esc_attr(sanitize_key($file)); ?>"
+                      name="ds_enabled_snippets[<?php echo esc_attr($file); ?>]" value="1"
+                      <?php checked($is_checked, true); ?> />
+                    Enable this snippet
+                  </label>
+                </td>
+              </tr>
+            <?php endforeach; ?>
+          </tbody>
+        </table>
+        <?php submit_button('Save Snippet Settings'); ?>
+      <?php endif; ?>
+    </form>
+  </div>
+<?php
+}
