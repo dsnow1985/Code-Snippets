@@ -7,6 +7,8 @@
  * Author: David Snow
  * Author URI: https://davidsnow.net
  * Requires Plugins: woocommerce, woocommerce-subscriptions
+ * License: GPLv2 or later
+ * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  */
 
 /**
@@ -20,7 +22,8 @@ if (! class_exists('WooCommerce')) {
 ?>
     <div class="notice notice-error is-dismissible">
       <p>
-        <strong>Remove Free Trial Text Snippet:</strong> Requires <strong>WooCommerce</strong> to be installed and active.
+        <strong>Remove Free Trial Text Snippet:</strong> Requires <strong>WooCommerce</strong> to be installed and active
+        for this code to work.
       </p>
     </div>
   <?php
