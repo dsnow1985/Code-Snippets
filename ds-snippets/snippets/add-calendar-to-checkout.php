@@ -1,6 +1,13 @@
 <?php
 
 /**
+ * Plugin Name: Add Calendar to Checkout
+ * Description: Adds a calendar datepicker to the WooCommerce checkout page.
+ * Version: 1.0
+ * Author: David Snow
+ * Author URI: https://davidsnow.net
+ */
+/**
  * Fail-safe check: Verify WooCommerce is active.
  * If not, display an admin warning banner and stop snippet execution.
  */
@@ -25,7 +32,8 @@ function ds_woocommerce_missing_admin_notice()
 ?>
   <div class="notice notice-error is-dismissible">
     <p>
-      <strong>DS Snippet Disabled:</strong> The custom checkout datepicker snippet requires <strong>WooCommerce</strong>
+      <strong>DS Snippet Disabled:</strong> The custom <strong>Add Calendar to Checkout</strong> snippet requires
+      <strong>WooCommerce</strong>
       to be installed and activated.
     </p>
   </div>
