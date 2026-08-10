@@ -6,6 +6,9 @@
  * Version: 1.0
  * Author: David Snow
  * Author URI: https://davidsnow.net
+ * Requires Plugins: WooCommerce 
+ * License: GPLv2 or later
+ * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  */
 
 /* Fail-safe check: Verify WooCommerce is active. If not, display an admin warning banner and stop snippet execution.*/
