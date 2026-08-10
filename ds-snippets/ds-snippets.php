@@ -5,6 +5,9 @@
  * Description: Scans a target folder and includes PHP files based on settings toggles.
  * Version: 2.3
  * Author: David Snow
+ * Author URI: https://davidsnow.net
+ * License: GPLv2 or later
+ * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  */
 
 if (! defined('ABSPATH')) {
@@ -60,12 +63,13 @@ function ds_get_snippet_files(): array
     $display_name = ! empty($header_data['Name']) ? $header_data['Name'] : $file;
 
     $snippets[$file] = [
-      'file'        => $file,
-      'name'        => $display_name,
-      'description' => $header_data['Description'],
-      'version'     => $header_data['Version'],
-      'author'      => $header_data['Author'],
-      'author_uri'  => $header_data['AuthorURI'],
+      'file'             => $file,
+      'name'             => $display_name,
+      'description'      => $header_data['Description'],
+      'version'          => $header_data['Version'],
+      'author'           => $header_data['Author'],
+      'author_uri'       => $header_data['AuthorURI'],
+      'requires_plugins' => $header_data['RequiresPlugins'],
     ];
   }
 
@@ -184,6 +188,7 @@ function ds_snippets_options_page(): void
               <th scope="col">Description</th>
               <th scope="col" style="width: 100px;">Version</th>
               <th scope="col">Author</th>
+              <th scope="col">Required Plugins</th>
             </tr>
           </thead>
           <tbody>
@@ -213,6 +218,7 @@ function ds_snippets_options_page(): void
                     <?php echo esc_html($info['author']); ?>
                   <?php endif; ?>
                 </td>
+                <td><?php echo esc_html($info['requires_plugins']); ?></td>
               </tr>
             <?php endforeach; ?>
           </tbody>
