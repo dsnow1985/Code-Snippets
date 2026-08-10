@@ -3,7 +3,7 @@
 /**
  * Plugin Name: DS Snippets
  * Description: Scans a target folder and includes PHP files based on settings toggles.
- * Version: 2.2
+ * Version: 2.3
  * Author: David Snow
  */
 
@@ -88,11 +88,10 @@ function ds_run_enabled_snippets(): void
   $valid_snippets = array_keys(ds_get_snippet_files());
 
   foreach ($enabled_snippets as $file => $is_enabled) {
-    // strict check against allowed file list
     if ($is_enabled && in_array($file, $valid_snippets, true)) {
       $file_path = realpath($dir_path . sanitize_file_name($file));
 
-      // Ensure realpath stays within the designated snippets directory
+      // Ensure realpath stays strictly within the designated snippets directory
       if ($file_path && strpos($file_path, realpath($dir_path)) === 0 && file_exists($file_path)) {
         include_once $file_path;
       }
