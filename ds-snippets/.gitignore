@@ -1,0 +1,14 @@
+# OS Junk
+.DS_Store
+Thumbs.db
+
+# Node / Build Dependencies
+node_modules/
+vendor/
+
+# Local IDEs
+.vscode/
+.idea/
+
+# Local Zip Files / Build Artifacts
+*.zip
