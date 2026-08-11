@@ -1,0 +1,28 @@
+name: Update Plugin Version on Tag
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  update-version:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Extract version from tag
+        id: get_version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_ENV
+
+      - name: Update Version in PHP files
+        run: |
+          sed -i "s/\* Version:.*/\* Version: ${{ env.VERSION }}/g" your-plugin-file.php
+
+      - name: Commit and push updated version
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git commit -am "Bump plugin version to ${{ env.VERSION }}"
+          git push
