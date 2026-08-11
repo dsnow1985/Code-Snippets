@@ -22,7 +22,8 @@ if (! class_exists('WooCommerce')) {
 ?>
     <div class="notice notice-error is-dismissible">
       <p>
-        <strong>Apply Tax Before Coupons Snippet:</strong> Requires <strong>WooCommerce</strong> to be installed and active
+        <strong>Delay Sending Order Emails Snippet:</strong> Requires <strong>WooCommerce</strong> to be installed and
+        active
         for this code to work.
       </p>
     </div>
