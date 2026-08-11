@@ -3,7 +3,7 @@
 /**
  * Plugin Name: Remove Free Trial Text from Subscriptions
  * Description: Removes the free trial text from subscription products in WooCommerce.
- * Version: 1.0
+ * Version: 1.2
  * Author: David Snow
  * Author URI: https://davidsnow.net
  * Requires Plugins: woocommerce, woocommerce-subscriptions
